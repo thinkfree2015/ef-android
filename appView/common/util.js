@@ -4,13 +4,11 @@
  * 主要提供工具方法
  *
  */
-var React = require('react-native');
-var Dimensions = require('Dimensions');
-
-var {
-  PixelRatio,
-  ActivityIndicatorIOS
-  } = React;
+import React, {
+    PixelRatio,
+    ActivityIndicatorIOS
+} from 'react-native';
+import Dimensions from 'Dimensions';
 
 module.exports = {
   /*最小线宽*/

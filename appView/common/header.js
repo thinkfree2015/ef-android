@@ -1,68 +1,59 @@
-import React,{
+/**
+ * Created by qiuxi on 2016/2/16.
+ */
+
+import React, {
     Component,
-    View,
     StyleSheet,
+    Image,
     Text,
-    TouchableOpacity,
-    Platform
+    View,
+    ScrollView,
+    TouchableOpacity
 } from 'react-native';
-import Icon from './left_icon';
+import {styles as styles0,ArrowLeft,ArrowRight,ShareIcon} from './styles';
 
-export default class Header extends Component{
-  render(){
-    var obj = this.props.initObj;
-    return (
-        <View style={[styles.header, styles.row, styles.center]}>
-            <TouchableOpacity style={[styles.row,styles.center,styles.icon]} onPress={this._pop}>
-                <Icon/>
-                <Text style={styles.fontFFF}>{obj.backName}</Text>
-            </TouchableOpacity>
-          <View style={[styles.title, styles.center]}>
-            <Text style={[styles.fontFFF, styles.titlePos]} numberOfLines={1}>{obj.title}</Text>
-          </View>
-            <TouchableOpacity style={[styles.row,styles.center,styles.icon]} onPress={this._pop}>
 
-            </TouchableOpacity>
-        </View>
-    )
-  }
+export default class Header extends Component {
 
-  _pop(){
-    this.props.navigator.pop();
-  }
+    render(){
+        let obj=this.props.initObj;
+        return(
+            <View style={[styles0.row,styles0.center,styles0.pl12,styles0.pr12,styles0.topbor,styles0.btmbor,styles.header,]}>
+                <TouchableOpacity style={styles.h_icon} onPress={this._pop}>
+                    <ArrowLeft />
+                </TouchableOpacity>
+                <View style={[styles0.row,styles0.flex,styles0.center]}>
+                    <Text style={[styles0.color3,styles0.fz14]} numberOfLines={1}>{obj.title}</Text>
+                </View>
+                <TouchableOpacity style={[styles.h_icon]} onPress={this._pop}>
+                    <ShareIcon/>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.h_text]} onPress={this._pop}>
+                    <Text style={styles0.black}>注册</Text>
+                </TouchableOpacity>
+            </View>
+        )
+    }
+
+    _pop(){
+        this.props.navigator.pop();
+    }
+
 }
 
-
-const styles = StyleSheet.create({
-    row:{
-        flexDirection:'row'
-    },
+const styles=StyleSheet.create({
     header:{
-        flex:1,
-        height:50,
-        backgroundColor:'#3497FF',
-        alignItems:'center',
-        paddingTop: Platform.OS === 'ios' ? 20 : 0,  // 处理iOS状态栏
-        height: Platform.OS === 'ios' ? 68 : 48,   // 处理iOS状态栏
+        height:44,
+        borderColor:'#e2e2e2',
+        backgroundColor:'#fff',
     },
-    fontFFF:{
-        color:'#fff',
-        fontSize:17,
-        fontWeight:'bold',
+    h_icon:{
+        height:16,
+        left:0,
     },
-    icon:{
-        width:56,
-    },
-    title:{
-        flex:1,
-        alignItems:'center',
-        height:30,
-        backgroundColor:'rgba(0,0,0,0)',
-
-    },
-    center:{
-        justifyContent:'center',
-        alignItems:'center'
+    h_aLeft:{
+        borderColor:'#333',
+        marginLeft:3,
     }
-});
-
+})
