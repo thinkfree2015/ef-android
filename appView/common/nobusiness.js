@@ -15,28 +15,31 @@ import {styles as styles0} from './styles';
 
 //输入框
 export class LoginInput extends React.Component{
- render(){
-     let obj=this.props.newObj;
-     return(
-         <View style={[styles0.bor,styles.loginView]}>
-             <TextInput
-                 placeholderTextColor="#ccc"
-                 placeholder={obj.placeholder}
-                 {...this.props}
-                 style={[styles0.fz11,styles0.flex,styles0.pl12,styles0.pr12,styles.input]}
-             />
-         </View>
-     )
- }
+    render(){
+        let obj=this.props.newObj;
+        return(
+            <View style={[styles0.bor,styles.loginView]}>
+                <TextInput
+                    placeholderTextColor="#ccc"
+                    placeholder={obj.placeholder}
+                    secureTextEntry={this.props.secureTextEntry}
+                    onChangeText={this.props.onChangeText}
+                    onBlur={this.props.onBlur}
+                    style={[styles0.fz11,styles0.flex,styles0.pl12,styles0.pr12,styles.input]}
+                />
+            </View>
+        )
+    }
 }
+
 //按钮
 export class LoginButton extends React.Component{
     render(){
         let obj=this.props.newObj;
         return(
             <View style={[styles.loginView]}>
-                <TouchableOpacity style={[styles0.row,styles.btn]}>
-                    <View style={[styles0.row,styles0.center,styles0.flex,styles.btn]}>
+                <TouchableOpacity style={[styles0.row,styles.btn]} onPress={this.props.oPress}>
+                    <View style={[styles0.row,styles0.center,styles0.flex,styles0.vertical,styles.btn]}>
                         <Text style={[styles0.fz12,styles0.white]}>{obj.text}</Text>
                     </View>
                 </TouchableOpacity>
@@ -45,22 +48,21 @@ export class LoginButton extends React.Component{
     }
 }
 
-
-
 //验证码
 export class Authcode extends React.Component{
     render(){
         let obj=this.props.newObj;
         return(
             <View style={[styles0.bor,styles.loginView]}>
-                    <TextInput
-                        placeholderTextColor="#ccc"
-                        placeholder="请输入短信验证码"
-                        style={[styles0.fz11,styles0.flex,styles0.pl12,styles0.pr12,styles.input]}
-                    />
-                    <TouchableOpacity style={[styles0.center,styles.input_yzm]}>
-                        <Text style={[styles0.fz11,styles0.gray]}>{obj.text}</Text>
-                    </TouchableOpacity>
+                <TextInput
+                    placeholderTextColor="#ccc"
+                    placeholder="请输入短信验证码"
+                    style={[styles0.fz11,styles0.flex,styles0.pl12,styles0.pr12,styles.input]}
+                    onChangeText={this.props.onChangeText}
+                />
+                <TouchableOpacity style={[styles0.center,styles0.vertical,styles.input_yzm]} onPress={this.props.onPress}>
+                    <Text style={[styles0.fz11,styles0.gray]}>{obj.text}</Text>
+                </TouchableOpacity>
             </View>
         )
     }
@@ -94,7 +96,4 @@ const styles=StyleSheet.create({
         height:35,
         backgroundColor:'#000',
     },
-
-
-
 });

@@ -27,13 +27,13 @@ module.exports = {
    */
   get: function(url, successCallback, failCallback){
     fetch(url)
-      .then((response) => response.text())
-      .then((responseText) => {
-        successCallback(JSON.parse(responseText));
-      })
-      .catch(function(err){
-        failCallback(err);
-      });
+        .then((response) => response.text())
+        .then((responseText) => {
+          successCallback(JSON.parse(responseText));
+        })
+        .catch(function(err){
+          failCallback(err);
+        });
   },
   /*loading效果*/
   loading: <ActivityIndicatorIOS color="#3E00FF" style={{marginTop:40,marginLeft:Dimensions.get('window').width/2-10}}/>
