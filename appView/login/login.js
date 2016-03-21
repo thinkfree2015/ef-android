@@ -19,7 +19,7 @@ import {hex_sha1} from '../util/sha1';
 import store from './../redux/store';
 import { fetchPosts } from './../redux/actions/loginAction'
 var timestamp=new Date().getTime();
-
+import ForgetPwdView from './forgetPwd';
 //主页
 export default class Login extends Component {
     // 构造
@@ -73,7 +73,16 @@ export default class Login extends Component {
         navigator.pop();
     }
     forgetPwd(){
-
+        const { navigator } = this.props;
+        navigator.push({
+            component:ForgetPwdView,
+        })
+    }
+    fastRegister(){
+        const { navigator } = this.props;
+        navigator.push({
+            component:RegisterView,
+        });
     }
     render() {
         return (
@@ -88,7 +97,7 @@ export default class Login extends Component {
 
 
                 <View style={[styles0.flex,styles0.row,styles.login_p]}>
-                    <TouchableOpacity style={[styles0.left,styles0.flex,styles.login_text]}>
+                    <TouchableOpacity style={[styles0.left,styles0.flex,styles.login_text]}  onPress={this.fastRegister.bind(this)} >
                         <Text style={[styles0.fz11,styles0.gray]}>快速注册</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles0.right,styles0.flex,styles.login_text]} onPress={this.forgetPwd.bind(this)}>
@@ -100,7 +109,7 @@ export default class Login extends Component {
                 <View style={[styles0.flex,styles.login_p]}>
                     <View style={[styles0.row,styles0.center,styles0.flex,styles.login_pTxt]}>
                         <View style={[styles0.flex,styles0.topbor,styles.login_pLine]}></View>
-                        <View style={[styles0.flex,styles0.center]}><Text style={[styles.fz11,styles.gray]}>快速登录</Text></View>
+                        <View style={[styles0.flex,styles0.center]} ><Text style={[styles.fz11,styles.gray]}>快速登录</Text></View>
                         <View style={[styles0.flex,styles0.topbor,styles.login_pLine]}></View>
                     </View>
                     <View style={[styles0.row,styles0.center,styles0.vertical]}>

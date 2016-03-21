@@ -5,27 +5,61 @@ import React, {Component,StyleSheet,Image,Text,View,ScrollView,ListView,Touchabl
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import {styles as styles0,Header,LayoutBtn,IconDiscuss,IconInvestment,IconDesTips,IconDesTipsGray,IconPayment,sizeHeight} from './../common/styles';
 import {TopImg,HeadMaster,TitleBar,DiscussMod,ProgressBar,ArtworkDetails,StickyBottom} from './../common/business';
-
+import store from './../redux/store';
+import { putJson, getJson} from '../util/jsonUtil';
+import { fetchPosts } from './../redux/actions/loginAction';
+var timestamp=new Date().getTime();
 //主页面
 export default class ProjectDetails extends Component {
     constructor(props){
         super(props);
         this.state = {
             active:'false',
+            artWorkId:'',
+            detail:{},
         };
+    }
+    componentDidMount() {
+        //这里获取从FirstPageComponent传递过来的参数: id
+        this.setState({
+            artWorkId: this.props.id
+        });
+        this.fetchData();
+    }
+    fetchData() {
+        store.dispatch(fetchPosts('/app/investorArtWork.do',this.getDataJsonCode())).then((json) =>{
+            var responseData = store.getState().pageByLogin.ServerData;
+            console.log("responseData"+responseData);
+            if (responseData.resultCode==0){
+                this.setState({detail:responseData.object})
+            }
+        }).catch((error)=>{
+            console.log(error)
+        }).done();
+    }
+    getDataJsonCode(){
+        let data='';
+        putJson('artWorkId',this.state.artWorkId);
+        putJson('timestamp',timestamp+"");
+        data =getJson();
+        console.log("data"+data);
+        return  data;
     }
     onkeyDown(){
         this.setState({active:!this.state.active});
+    }
+    back(){
+
     }
     render(){
         let wSzie=Math.floor((this.state.width/592)*100);
         return(
             <View style={[styles0.flex,{backgroundColor:'#fff'}]}>
                 <Header
-                    title={'逐鹿顺意铜雕'}
+                    title={this.state.detail.title}
                     BackIcon={true}
                     ShareIcon={true}
-                />
+                    backPress={this.back.bind(this)}/>
                 <ScrollView>
                     {/*大图*/}
                     <TopImg

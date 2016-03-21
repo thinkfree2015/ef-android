@@ -32,7 +32,8 @@ export default class Register extends Component {
             inputPhone:'',
             inputVCode:'',
             inputPassword:'',
-            inputPwAgain:''
+            inputPwAgain:'',
+            isGetcode:false
         };
     }
     getDataJsonCode(){
@@ -67,8 +68,14 @@ export default class Register extends Component {
     getCode(){
         if (code==0){
             store.dispatch(fetchPosts('/app/sendCode.do',this.getDataJsonCode())).then((json) =>{
-                /*var dataState = store.getState();
-                 console.log("dataState.pageByLogin"+dataState.pageByLogin);*/
+                var dataState = store.getState();
+                if (dataState.pageByLogin.ServerData.resultCode==0){
+                    this.setState({
+                        isGetcode:true
+                    })
+                }else {
+                    ToastAndroid.show("获取验证码失败，请重新获取",ToastAndroid.LONG);
+                }
             }).catch((error)=>{
                 console.log(error)
             }).done();
@@ -78,48 +85,54 @@ export default class Register extends Component {
     register(){
         const { navigator } = this.props;
         const reg = /^[0-9a-zA-Z]+$/;
-        if (this.state.inputVCode){
-            if (this.state.inputPassword){
-                if (reg.test(this.state.inputpassword) && this.state.inputPassword.length>=6 && this.state.inputPassword.length<=16){
-                    if (this.state.inputPwAgain){
-                        if (reg.test(this.state.inputPwAgain) && this.state.inputPwAgain.length>=6 && this.state.inputPwAgain.length<=16){
-                            if (this.state.inputPassword==this.state.inputPwAgain){
-                                store.dispatch(fetchPosts('/app/verifyCode.do',this.getDataJsonVCode())).then((json) =>{
-                                    var dataState = store.getState();
-                                    console.log("verifyCode.do"+dataState.pageByLogin);
-                                    if (dataState.pageByLogin.ServerData.resultCode==0){
-                                        store.dispatch(fetchPosts('/app/register.do',this.getDataJsonRegister())).then((json) =>{
-                                            var dataState = store.getState();
-                                            console.log("register.do"+dataState.pageByLogin);
-                                            if (dataState.pageByLogin.ServerData.resultCode==0){
-                                                navigator.push({
-                                                    component: RegSucceedView
-                                                })
-                                            }
-                                        }).catch((error)=>{
-                                            console.log(error)
-                                        }).done();
-                                    }
-                                }).catch((error)=>{
-                                    console.log(error)
-                                }).done();
+        if (this.state.isGetcode){
+            if (this.state.inputVCode){
+                if (this.state.inputPassword){
+                    if (reg.test(this.state.inputpassword) && this.state.inputPassword.length>=6 && this.state.inputPassword.length<=16){
+                        if (this.state.inputPwAgain){
+                            if (reg.test(this.state.inputPwAgain) && this.state.inputPwAgain.length>=6 && this.state.inputPwAgain.length<=16){
+                                if (this.state.inputPassword==this.state.inputPwAgain){
+                                    store.dispatch(fetchPosts('/app/verifyCode.do',this.getDataJsonVCode())).then((json) =>{
+                                        var dataState = store.getState();
+                                        console.log("verifyCode.do"+dataState.pageByLogin);
+                                        if (dataState.pageByLogin.ServerData.resultCode==0){
+                                            store.dispatch(fetchPosts('/app/register.do',this.getDataJsonRegister())).then((json) =>{
+                                                var dataState = store.getState();
+                                                console.log("register.do"+dataState.pageByLogin);
+                                                if (dataState.pageByLogin.ServerData.resultCode==0){
+                                                    navigator.push({
+                                                        component: RegSucceedView,
+                                                        params: {
+                                                            username: this.state.inputPhone,
+                                                        }
+                                                    })
+                                                }
+                                            }).catch((error)=>{
+                                                console.log(error)
+                                            }).done();
+                                        }
+                                    }).catch((error)=>{
+                                        console.log(error)
+                                    }).done();
+                                }else {
+                                    ToastAndroid.show("两次输入的密码不一样,请重新输入",ToastAndroid.LONG);
+                                }
                             }else {
-                                ToastAndroid.show("两次输入的密码不一样,请重新输入",ToastAndroid.LONG);
+                                ToastAndroid.show("密码格式不对,请输入6-16位的字母或数字组成的密码",ToastAndroid.LONG);
                             }
                         }else {
-                            ToastAndroid.show("密码格式不对,请输入6-16位的字母或数字组成的密码",ToastAndroid.LONG);
+                            ToastAndroid.show("密码不能为空,请输入6-16位的字母或数字组成的密码",ToastAndroid.LONG);
                         }
                     }else {
-                        ToastAndroid.show("密码不能为空,请输入6-16位的字母或数字组成的密码",ToastAndroid.LONG);
+                        ToastAndroid.show("密码格式不对,请输入6-16位的字母或数字组成的密码",ToastAndroid.LONG);
                     }
                 }else {
-                    ToastAndroid.show("密码格式不对,请输入6-16位的字母或数字组成的密码",ToastAndroid.LONG);
+                    ToastAndroid.show("密码不能为空，请输入6-16位的字母或数字组成的密码",ToastAndroid.LONG);
                 }
             }else {
-                ToastAndroid.show("密码不能为空，请输入6-16位的字母或数字组成的密码",ToastAndroid.LONG);
+                ToastAndroid.show("验证码不能为空,请输入6位验证码",ToastAndroid.LONG);
             }
-        }else {
-            ToastAndroid.show("验证码不能为空,请输入6位验证码",ToastAndroid.LONG);
+
         }
     }
     sendPhone(){
@@ -130,11 +143,10 @@ export default class Register extends Component {
                     var dataState = store.getState();
                     console.log("dataState.pageByLogin"+dataState.pageByLogin);
                     console.log("dataState.pageByLogin"+dataState.pageByLogin.ServerData.resultCode);
-                    code=dataState.pageByLogin.ServerData.resultCode;
                     if(dataState.pageByLogin.ServerData.resultCode==0){
-
+                        code=dataState.pageByLogin.ServerData.resultCode;
                     }else {
-                        ToastAndroid.show("该手机号已经注册",ToastAndroid.LONG);
+                        ToastAndroid.show("该手机号已经注册,请重新输入",ToastAndroid.LONG);
                     }
                 }).catch((error)=>{
                     console.log(error)
@@ -150,14 +162,17 @@ export default class Register extends Component {
         const { navigator } = this.props;
         navigator.push({component:LoginView});
     }
+    back(){
+        const { navigator } = this.props;
+        navigator.pop();
+    }
     render() {
         return (
             <View style={styles.login}>
-
                 <Header
                     title={'快速注册'}
                     BackIcon={true}
-                />
+                    backPress={this.back.bind(this)}/>
                 <LoginInput newObj={{
                     placeholder:'请输入手机号'}}
                     onChangeText ={(text) => this.setState({inputPhone: text})}
@@ -180,7 +195,6 @@ export default class Register extends Component {
                         <Text style={[styles0.fz11,styles0.color3b]}>立即登录</Text>
                     </TouchableOpacity>
                 </View>
-
             </View>
         )
     }

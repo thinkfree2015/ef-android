@@ -5,6 +5,7 @@
  * Created by Administrator on 2016/2/20.
  */
 'use strict';
+//新建项目
 import React, {
     AppRegistry,
     Component,
@@ -37,11 +38,11 @@ export default class Newsponsor extends Component{
                     </View>
                     <View  style={[styles.poninput]} >
                         <TextInput
-                            style={[styles0.flex,styles0.fz12,styles0.black,styles0.vertical]}
+                            style={[{height:180},styles0.fz12,styles0.black]}
                             value="请输入文字或照片"
                             placeholderTextColor="#ccc"
                             underlineColorAndroid="transparent"
-                            textAlignVertical={'top'}
+                            textAlignVertical="top"
                             multiline={true}
                             numberOfLines={10}
                         />

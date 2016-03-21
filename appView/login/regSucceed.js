@@ -1,7 +1,7 @@
 /**
  * Created by qiuxi on 2016/2/25.
  */
-import React, {Component,StyleSheet,View,Text,Image,TextInput,TouchableOpacity} from 'react-native';
+import React, {NativeModules,Component,StyleSheet,View,Text,Image,TextInput,TouchableOpacity,ToastAndroid} from 'react-native';
 import {styles as styles0,Header,ArrowRight,sizeWidth,sizeHeight} from './../common/styles';
 import {LoginInput,LoginButton,Authcode} from './../common/nobusiness';
 import Modal from 'react-native-root-modal';
@@ -9,7 +9,10 @@ import { putJson, getJson,getJsonStr} from '../util/jsonUtil';
 import {hex_sha1} from '../util/sha1';
 import store from './../redux/store';
 import { fetchPosts } from './../redux/actions/loginAction'
-
+var PickerImage = NativeModules.ImagePickerManager;
+import {filesUpload} from '../util/uploadImage';
+var timestamp=new Date().getTime();
+import Homeview from '../projects/project';
 //注册成功后的组件
 export default class regSucceedView extends Component {
     constructor() {
@@ -17,21 +20,83 @@ export default class regSucceedView extends Component {
         this.state = {
             visible: false,
             sex:2,
-
+            nickName:"",
+            username:"",
+            isUpLoad:false,
+            image: {uri: "http://pro.efeiyi.com/product/%E8%8C%B6%E9%A9%AC%E5%8F%A4%E9%81%93120160113174841.jpg@!product-details-picture"},
         };
     }
 
+    componentDidMount() {
+        //这里获取从FirstPageComponent传递过来的参数: id
+        this.setState({
+            id: this.props.username
+        });
+        console.log(this.state.username+"username");
+    }
+    launchPicker() {
+        var options = {
+            title: '选择头像', // specify null or empty string to remove the title
+            cancelButtonTitle: '取消',
+            takePhotoButtonTitle: '拍照', // specify null or empty string to remove this button
+            chooseFromLibraryButtonTitle: '从图库选择', // specify null or empty string to remove this button
+            customButtons: {
+                'Choose Photo from Facebook': 'fb' // [Button Text] : [String returned upon selection]
+            },
+            quality: 1,
+            allowsEditing: false, // Built in iOS functionality to resize/reposition the image
+            noData: false // Disables the base64 `data` field from being generated (greatly improves performance on large photos)
+        };
+        var _this = this;
+        PickerImage.showImagePicker(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePickerManager Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                // Get the source and set the state
+                console.log("Got the response", response);
+                const source = {uri: response.uri, isStatic: true};
+                _this.setState({
+                    image: {uri: source.uri}
+                });
+            }
+        });
+    }
+    getDataJson(){
+        let data='';
+        putJson('username',"18510251819");
+        putJson('nickname',this.state.nickName);
+        putJson('timestamp',timestamp+"");
+        putJson('sex',this.state.sex+"");
+        data =getJson();
+        console.log(data.signmsg+"data.signmsg");
+        return  data.signmsg;
+    }
+    getData(uri){
+        var data=new FormData();
+        data.append("username","18510251819");
+        data.append("nickname",this.state.nickName);
+        data.append("sex",this.state.sex+"");
+        data.append("headPortrait",{uri:uri,name:"image.jpg",type:"image/jpg"});
+        data.append("timestamp",timestamp+"");
+        console.log(this.getDataJson()+"this.getdata")
+        data.append("signmsg",this.getDataJson());
+        return data;
+    }
     showModal = () => {
         this.setState({
             visible: true
         });
+        this.refs.input.blur();
     };
 
     hideModal1 = () => {
         this.setState({
             visible: false,
             sex:1,
-            nickName:"",
         });
     };
     hideModal2 = () => {
@@ -41,9 +106,32 @@ export default class regSucceedView extends Component {
         });
     };
     modifyHead(){
-
+        this.launchPicker();
     }
     complete(){
+        const { navigator } = this.props;
+        console.log(this.state.image.uri);
+        if (this.state.nickName){
+            if(this.state.image.uri){
+                if(this.state.sex){
+                    filesUpload("http://192.168.1.69:8001/app/completeUserInfo.do",this.getData(this.state.image.uri),(responseData)=>{
+                        console.log(responseData);
+                        console.log(responseData.resultCode);
+                        if (responseData.resultCode==0){
+                            navigator.push({
+                                component:Homeview,
+                            })
+                        }
+                    });
+                }else {
+                    ToastAndroid.show("性别不能为空",ToastAndroid.LONG);
+                }
+            }else {
+                ToastAndroid.show("头像不能为空",ToastAndroid.LONG);
+            }
+        }else {
+            ToastAndroid.show("昵称不能为空",ToastAndroid.LONG);
+        }
 
     }
     render() {
@@ -55,7 +143,7 @@ export default class regSucceedView extends Component {
                     completePress={this.complete.bind(this)}/>
                 <View style={[styles0.center,styles0.pt12,styles0.pb12,styles0.topbor,styles0.btmbor,styles0.mt9,styles.l_head]}>
                     <TouchableOpacity style={[styles0.vertical,styles0.center,styles.l_head_btn]} onPress={this.modifyHead.bind(this)}>
-                        <Image style={styles.l_head_img} source={{uri:'http://pro.efeiyi.com/product/%E8%8C%B6%E9%A9%AC%E5%8F%A4%E9%81%93120160113174841.jpg@!product-details-picture'}} />
+                        <Image style={styles.l_head_img} source={this.state.image} />
                         <Text style={[styles0.fz10,styles0.white,styles.l_head_txt]}>添加头像</Text>
                     </TouchableOpacity>
                 </View>
@@ -65,7 +153,7 @@ export default class regSucceedView extends Component {
                         <Text style={[styles0.black,styles0.fz12,styles.xx_text]}>昵称</Text>
                     </View>
                     <View style={styles.xx_ipt}>
-                        <TextInput underlineColorAndroid='transparent' maxLength={8} style={[styles0.flex,styles0.fz12,styles0.gray,{textAlign:"right",width:500}]}
+                        <TextInput ref='input' underlineColorAndroid='transparent' maxLength={8} style={[styles0.flex,styles0.fz12,styles0.gray,{textAlign:"right",width:500}]}
                                    onChangeText ={(text) => this.setState({nickName: text})}/>
                     </View>
                     <View style={[styles0.right,styles0.flex]}>
