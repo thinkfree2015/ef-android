@@ -22,7 +22,7 @@ import React, {
 //样式
 import {styles as styles0,ArrowRight,Header} from './../common/styles';
 import {Accbalance as Accbalance0,Acchint,Account} from './../deal/recharge';
-import {IssueBtn as IssueBtn0} from './../projects/artisthub'
+import {IssueBtn as IssueBtn0} from './artisthub'
 //主页
 export default class Newsponsor extends Component{
     render() {

@@ -19,8 +19,8 @@ import React, {
 
 import {styles as styles0,ArrowRight,Header} from './../common/styles';
 import {Accbalance as Accbalance0,Acchint,Account} from './../deal/recharge';
-import {Txtinput as Txtinput0,Video} from './../projects/issuevideo';
-import {Attuploading as Attuploading0} from './../projects/attestation'
+import {Txtinput as Txtinput0,Video} from './issuevideo';
+import {Attuploading as Attuploading0} from './attestation'
 
 export const icon=[
     require('./../image/video.png')

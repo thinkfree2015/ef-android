@@ -21,7 +21,7 @@ import {styles as styles0,Header,LayoutBlackBtn} from './../common/styles';
 import {Accbalance as Accbalance0,Acchint,Account} from './../deal/recharge';
 import {Attinput as  Attinput0} from './attestation';
 import {Txtinput as  Txtinput0,Video,icon} from './issuevideo';
-import {Attuploading as Attuploading0} from './../projects/attestation';
+import {Attuploading as Attuploading0} from './attestation';
 
 export default class NewApplyProject extends Component {
     render() {

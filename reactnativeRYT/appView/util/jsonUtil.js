@@ -1,4 +1,4 @@
-import {MD5} from '../util/md5';
+import {MD5} from 'md5';
 var jSONData={};
 export function  putJson(key, value) {
 
